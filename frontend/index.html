@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap 4 Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script></head>
+  
+<body>
+
+
+   
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Sas Network</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Add Student</a></li>
+      <li><a href="#">View Class</a></li>
+      <li><a href="#">View Teacher</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h2>Add Student</h2>
+  <form class="form-horizontal" action="">
+  <div class="container">
+        <div class='alert alert-danger' id="div_errors">
+        </div>
+        <div class="alert alert-success" id="div_success" >
+       </div>
+      
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="email">First Name:</label>
+      <div class="col-sm-10">
+         <input type = "text" class="form-control"   id="inputfname"   placeholder ="First Name" required />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Last Name:</label>
+      <div class="col-sm-10">          
+       <input type = "text" class="form-control"   id="inputlname"   placeholder ="Last Name" required />
+      </div>
+    </div>
+    
+	<div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Class:</label>
+      <div class="col-sm-10">          
+       <select class="form-control" id="selClass" >
+	 </select>
+      </div>
+    </div>
+	
+	<div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Teacher:</label>
+      <div class="col-sm-10">          
+         <select class="form-control" id="selTeacher" >
+	  </select>
+      </div>
+    </div>
+	
+	<div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Gender:</label>
+      <div class="col-sm-10">          
+		 <select class="form-control" id='selGender'>
+	  <option value="Male">Male</option>
+	  <option value="Female">Female</option>
+	</select>
+      </div>
+    </div>
+	
+	<div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Year:</label>
+      <div class="col-sm-10">          
+       <input type = "date" class="form-control"   id="inputYear"   placeholder ="Class" required />
+      </div>
+    </div>
+	<div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="button"  id=btnSave class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+  <div class="container">
+  <h2>View Student Records</h2>
+            
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Teacher</th>
+		<th>Gender</th>
+		<th>Year</th>
+		<th></th>
+      </tr>
+    </thead>
+    <tbody id='tblbody'>
+    </tbody>
+  </table>
+</div>
+  
+  
+</div>
+</div>
+
+
+
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Student Record</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+	<form id="my-form">
+	
+	
+	<div class="form-group">
+    <label for="text">First Name:</label>
+  <input type = "text" class="form-control"   id="m_inputfname"   placeholder ="First Name" required />
+   </div>
+   <div class="form-group">
+    <label for="text">Last Name::</label>
+  <input type = "text" class="form-control"   id="m_inputlname"   placeholder ="Last Name" required />
+   </div>
+   <div class="form-group">
+    <label for="text">Class:</label>
+	 <select class="form-control" id="m_selClass" >
+	 </select>
+     <input type='hidden' id='hndStudnetId' />
+   </div>
+   <div class="form-group">
+    <label for="text">Teacher:</label>
+	<select class="form-control" id="m_selTeacher" >
+	 </select>
+   </div>
+   <div class="form-group">
+    <label for="text">Gender:</label>
+ <select class="form-control" id='m_selGender'>
+	  <option value="Male">Male</option>
+	  <option value="Female">Female</option>
+	</select>
+   </div>
+   <div class="form-group">
+    <label for="text">Year:</label>
+  <input type = "date" class="form-control"   id="m_inputYear"   placeholder ="Class" required />
+   </div>
+   <div class="modal-footer">
+  <button class='btn btn-success' id='btnUpdate' >Edit</button>
+  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+  </div>
+  
+</form>
+  </div>
+</div>
+</div>
+</div>
+
+
+
+<script src='common.js'></script>
+<script>
+
+  $( document ).ready(function() {
+    
+   callSvc('',{}, loadSuccess, loadError,'GET');
+    $("#div_errors").hide();
+    $("#div_success").hide();
+   
+   });
+
+
+   $('#btnSave').on('click',function(){
+
+       clear();
+	   if(validation() == false){
+       return 
+        }		
+       
+	   var param = {'selTeacher':$('#selTeacher').val(),'selClass':$('#selClass').val(),'inputfname': $('#inputfname').val(),'inputlname':$('#inputlname').val(),
+		        'inputYear':$('#inputYear').val(),'selGender':$('#selGender').val()  };
+       callSvc("create",param,function(data){
+	    
+         $("#div_success").html(data.data);		
+		$("#div_success").show();
+		location.reload();
+	   },loadError);
+    
+
+   }); 
+   
+    $('#btnUpdate').on('click',function(){
+
+       
+	   var param = { 'hndStudnetId': $('#hndStudnetId').val(), 'selTeacher':$('#m_selTeacher').val(),'selClass':$('#m_selClass').val(),'inputfname': $('#m_inputfname').val(),'inputlname':$('#m_inputlname').val(),
+		        'inputYear':$('#m_inputYear').val(),'selGender':$('#m_selGender').val()  };
+       callSvc("update",param,function(data){
+	    
+         $("#div_success").html(data.data);		
+		$("#div_success").show();
+		location.reload();
+	   },loadError);
+    
+
+   }); 
+   
+
+   $(document).on('click','.btn-delete',function(){
+    
+	var id = $(this).data("id");
+	var param = {'hndStudnetId': id };
+       callSvc("delete",param,function(data){
+	    
+         $("#div_success").html(data.data);		
+		$("#div_success").show();
+		callSvc('',{}, loadSuccess, loadError,'GET');
+	   },loadError);
+   
+});
+
+ $(document).on('click','.btn-show',function(){
+    var id = $(this).data("id");
+	
+	 callSvc('show',{'hndEditId':id}, showFunc, loadError,'GET');
+});
+
+    
+
+   function loadSuccess(response){
+   
+     let dropdown_tech = $('#selTeacher');
+	 let dropdown_class = $('#selClass');
+	 let dropdown_m_tech = $('#m_selTeacher');
+	 let dropdown_m_class = $('#m_selClass');
+	 
+	 $.each(response.obj_teacher, function (key, entry) {
+        dropdown_tech.append($('<option></option>').attr('value', entry.id).text(entry.name));
+      })
+  
+    $.each(response.obj_class, function (key, entry) {
+        dropdown_class.append($('<option></option>').attr('value', entry.id).text(entry.name));
+    })
+	
+	 $.each(response.obj_teacher, function (key, entry) {
+        dropdown_m_tech.append($('<option></option>').attr('value', entry.id).text(entry.name));
+      })
+  
+    $.each(response.obj_class, function (key, entry) {
+        dropdown_m_class.append($('<option></option>').attr('value', entry.id).text(entry.name));
+    })
+	
+	console.log(response.obj_student);
+    xx = response.obj_student;
+		
+    var i;
+	var str = '';
+	for (i = 0; i < response.obj_student.length; i++) {  
+	   str +=  '<tr>'+
+        '<td>'+ response.obj_student[i].fname + '</td>'+
+        '<td>'+ response.obj_student[i].lname + '</td>'+
+         '<td>'+ response.obj_student[i].teacher + '</td>'+
+		  '<td>'+ response.obj_student[i].gender + '</td>'+
+         '<td>'+ response.obj_student[i].year + '</td>'+
+		 '<td><a   data-toggle="modal" data-target="#myModal" class="btn btn-info btn-show" data-id='+ response.obj_student[i].id + '>Edit</a></td>'+
+		 '<td><a class="btn btn-danger btn-delete" data-id='+ response.obj_student[i].id + '>Delete</a></td>'+
+      '</tr>';
+	}	
+ 	
+	 $('#tblbody').html(str);
+	 
+   }
+   
+   function showFunc(response){
+   
+   $('#m_selTeacher').val(response.obj_student[0].teachers_id);
+   $('#m_selClass').val(response.obj_student[0].class_id);
+   $('#m_inputfname').val(response.obj_student[0].fname);
+   $('#m_inputlname').val(response.obj_student[0].lname)
+   $('#m_inputYear').val(response.obj_student[0].year)
+   $('#m_selGender').val(response.obj_student[0].gender);
+    $('#hndStudnetId').val(response.obj_student[0].id);
+   
+   }
+   
+   function loadError (request, status, error){
+       $("#div_errors").html(request.responseText);
+	   $("#div_errors").show();
+    
+   }
+   
+
+</script>
